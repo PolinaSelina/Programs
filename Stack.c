@@ -25,18 +25,33 @@ struct Stack
 	MyType size;
 	MyType cur_position;
 	MyType *data;
+	// добавить канарейки, контрольную сумму, errno
 };
+/*
+можно сделать typedef
+это позволит не писать struct
+typedef struct
+{
+	MyType size;
+	MyType cur_position;
+	MyType *data;
+	// добавить канарейки, контрольную сумму, errno
+}Stack;
+
+*/
 
 MyType InitStack(struct Stack* stack);
 void Push(struct Stack* stack, MyType value);
 MyType OK(struct Stack* stack, MyType *data, MyType cur_position, MyType size, MyType myErrno, MyType value);
-void Dump(struct Stack* stack, MyType myErrno);
+// нужно передавать только указатель на структуру стек, остальные данные (size и т.д. можно проверить, обратясь к полю)
+// стека
+void Dump(struct Stack* stack, MyType myErrno); // errno  стек
 void Pop(struct Stack* stack);
 MyType StackTop(struct Stack* stack);
 
 int main() 
 {
-	MyType myErrno = 0;
+	MyType myErrno = 0; // эту переменную лучше хранить в структуре стека
 	MyType value = 0;
 	struct Stack stack  = {};
 
@@ -58,10 +73,10 @@ MyType InitStack(struct Stack* stack)
 	MyType myErrno = 0;
 	MyType value = 0;
 	printf("Enter size of stack\t");
-	scanf("%d", &stack->size);
-	stack->cur_position = 0;
+	scanf("%d", &stack->size); // заменить потом на 0, realloc при достижении критического размера
+	stack->cur_position = 0;   // массива (слишком маленького и слишком большого)
 	stack->data = (MyType*)calloc(sizeof(MyType), stack->size);
-	OK(stack, stack->data, stack->cur_position, stack->size, myErrno, value);
+	OK(stack, stack->data, stack->cur_position, stack->size, myErrno, value); //!!!!!!!!!! см выше
 	return (stack->size);
 }
 
@@ -106,10 +121,11 @@ MyType OK(struct Stack* stack, MyType *data, MyType cur_position, MyType size, M
 	{
 		myErrno = STACK_IS_EMPTY;
 	}
+	// return?
 }
 
 void Dump(struct Stack* stack, MyType myErrno)
-{
+{ // switch
 	if(myErrno == STACK_IS_NULL)
 	{
 		printf("STACK POINTER IS NULL\n");
@@ -147,9 +163,10 @@ void Dump(struct Stack* stack, MyType myErrno)
 void Pop(struct Stack* stack)
 {
 	MyType myErrno;
-	MyType value;
+	MyType value; // ?
 	OK(stack, stack->data, stack->cur_position, stack->size, myErrno, value);
 	stack->cur_position--;
+	// затереть нулем удаленное значение
 }
 
 MyType StackTop(struct Stack* stack)
@@ -158,7 +175,7 @@ MyType StackTop(struct Stack* stack)
 	MyType value;
 	OK(stack, stack->data, stack->cur_position, stack->size, myErrno, value);
 	MyType elem = 0;
-	stack->cur_position--;
+	stack->cur_position--; // cur_pos не менять, эта функция должна только возвращать значение
 	elem = stack->data[stack->cur_position];
 	return elem;
 }
