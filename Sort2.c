@@ -49,22 +49,25 @@ int main()
 
 int compare(const void *str1, const void *str2)
 {
+	// проверить указатели
 	return strcmp(*(const char **)str1, *(const char **)str2);
 }
 
-int SizeFile(FILE* ptrFile)
+int SizeFile(FILE* ptrFile) // лучше для размера файла использовать типо long int, т.к. возможно переполнение int
 {
-	fseek(ptrFile, 0, SEEK_END);
-	long lSize = ftell(ptrFile);
-	rewind (ptrFile);
+	// проверить ptrfile
+	fseek(ptrFile, 0, SEEK_END); // проверить fseek
+	long lSize = ftell(ptrFile); // проверить ftell
+	rewind (ptrFile);	     // проверить rewind
 	return lSize;
 }
 
 
 int QuantStr(int lSize, char *buffer)
 {
+	// проверить buffer
 	int count = 0;
-		for(int i = 0; i < lSize; i++)
+		for(int i = 0; i < lSize; i++)  // табуляция
 		{
 			if (buffer[i] == '\n')
 				count += 1;
@@ -72,7 +75,7 @@ int QuantStr(int lSize, char *buffer)
 	return count;
 }
 
-int Error()
+int Error() // лучше использовать макрос, принимающий название функции и условие на возвращаемое значение
 {
 	fputs("Error", stderr);
       	exit (EXIT_FAILURE);
@@ -82,6 +85,7 @@ int Fread(size_t result, char * buffer, long lSize, FILE * ptrFile)
 	result = fread(buffer, sizeof(char), lSize, ptrFile);
 	if (result != lSize)
   		Error();
+	// return !!!
 }
 
 void DeclareArrays (int *num, char **s, char *buffer, int lSize, int count)
@@ -101,12 +105,13 @@ void DeclareArrays (int *num, char **s, char *buffer, int lSize, int count)
 	for(int i = 0; i < count; i++)
 	{
 		s[i] = (char*) calloc(sizeof(char), (num[i+1]-num[i]));
-		strncpy(s[i], buffer+num[i]+1, num[i+1]-num[i]);
+		strncpy(s[i], buffer+num[i]+1, num[i+1]-num[i]);  // лишнее, можно обойтись без копирования
 	}
 }
 
 void Dump(char **s, FILE * Sorted, int count, char *buffer, int *num)
 {
+	// проверки указателей
 	for (int j = 0; j < count; j++)
 	{		
 		fwrite(s[j], sizeof(char), strlen(s[j]), Sorted);
@@ -114,9 +119,10 @@ void Dump(char **s, FILE * Sorted, int count, char *buffer, int *num)
 	}	
 }
 
-void Free(char **s, char *buffer, int *num)
+void Free(char **s, char *buffer, int *num)// назвать первую переменную более понятным способом
 {
-	free(s);
+	// проверки указателей
+	free(s); // в функции выше уже освободается память в char** s
 	free(buffer);
 	free(num);
 }
